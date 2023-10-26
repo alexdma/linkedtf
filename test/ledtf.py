@@ -61,10 +61,35 @@ class EDTF(unittest.TestCase):
         ts = guess_types(parse('1970-01-01/..'))
         self.assertNotIn(Time.Instant, ts)
         self.assertIn(Time.Interval, ts)
+        self.assertNotIn(EDTFO.OpenBeginningInterval, ts)
+        self.assertIn(EDTFO.OpenEndInterval, ts)
         # Unknown start interval ("no idea when it began")
         ts = guess_types(parse('/1970-01-01'))
         self.assertNotIn(Time.Instant, ts)
         self.assertIn(Time.Interval, ts)
+        # Fully open interval
+        ts = guess_types(parse('../..'))
+        self.assertNotIn(Time.Instant, ts)
+        self.assertIn(Time.Interval, ts)
+        self.assertIn(EDTFO.OpenBeginningInterval, ts)
+        self.assertIn(EDTFO.OpenEndInterval, ts)
+        # (a time in a) Month of a year
+        ts = guess_types(parse('1970-01'))
+        self.assertIn(Time.Instant, ts)
+
+    def testRDFDecade(self):
+        e = LEDTF(EDTF._NS_EXAMPLE)
+        val = '199X-XX-XX'
+        rdf = e.description(val)
+        """
+        ex:when a time:Instant ;
+  time:inDateTime  [
+    a edtfo:DecadeDescription ;
+    time:unitType time:unitYear ;
+    edtfo:decade 201
+    ]
+  .
+        """
 
     def testRDF(self):
         e = LEDTF(EDTF._NS_EXAMPLE)

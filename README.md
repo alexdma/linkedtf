@@ -10,8 +10,10 @@ This implementation allows you to generate a semantic representation of those te
 ## Features
 - A Python programming library. (_WIP_)
 - A Linked Data server. (_coming soon..._)
+- Inherits EDTF compliance from [saw-leipzig/python-edtf](https://github.com/saw-leipzig/python-edtf)[^1].
 - Represents data according to the [PeriodO specification](https://periodo.github.io/edtf-ontology/).
-- Inherits EDTF compliance from [ixc/python-edtf](https://github.com/ixc/python-edtf).
+
+[^1] Fork of [ixc/python-edtf](https://github.com/ixc/python-edtf) with support for recent versions of the EDTF specification.
 
 ## Usage
 
@@ -28,12 +30,13 @@ rdflib.term.URIRef('http://example.com/edtf/1987%2F2001')
 >>> ttl = g.serialize(format="ttl")
 >>> ttl
 <http://example.com/edtf/1987%2F2001> a <http://www.w3.org/2006/time#DateTimeDescription> .
-# ...
+# ... etc
 ```
 
 ## Limitations
 - EDTF seems to lack support for calendars other than the Gregorian one.
-- _Won't do_: SPARQL query engine for EDTF data generated on-the-fly; would be nice to have but some queries could never terminate.
+- _Won't do_: SPARQL query engine for EDTF data generated on-the-fly; would be nice to have, but some queries may never terminate.
+- _TODO_?: Support representation schemes other than PeriodO/OWL-Time (e.g. CIDOC-CRM?).
 
 ## Rights
 [LGPLv3](https://www.gnu.org/licenses/lgpl-3.0.en.html)
