@@ -1,10 +1,10 @@
 import urllib.parse
 
-from edtf import parse_edtf
-from rdflib import Graph, Namespace, RDF, URIRef
+from .model import guess_types, Time
+from edtf2 import parse_edtf
+from rdflib import Graph, RDF, URIRef
 
-EDTFO = Namespace('https://periodo.github.io/edtf-ontology/edtfo.ttl#')
-Time = Namespace('http://www.w3.org/2006/time#')
+
 
 
 class LEDTF(object):
@@ -14,10 +14,11 @@ class LEDTF(object):
         self.namespace = namespace
 
     def uri(self, edtf_val) -> URIRef:
-        parsed = parse_edtf(edtf_val)
+        # Re-raise any exception for now
+        parse_edtf(edtf_val)
         return URIRef(self.namespace + urllib.parse.quote_plus(edtf_val))
 
-    def description(self, edtf_val: [str, URIRef]) -> Graph:
+    def description(self, edtf_val: str) -> Graph:
         """
         Generates an RDF description of the EDTF value.
 
@@ -25,7 +26,9 @@ class LEDTF(object):
         (directly in the latter case, converted to URIRef in the former).
         :return:
         """
-        s = edtf_val if isinstance(edtf_val,URIRef) else self.uri(edtf_val)
+        s = self.uri(edtf_val)
+        do = parse_edtf(edtf_val)
         g = Graph()
         g.add((s, RDF.type, Time.DateTimeDescription))
+        t = guess_types(do)
         return g

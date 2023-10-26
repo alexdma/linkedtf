@@ -14,7 +14,7 @@ This implementation allows you to generate a semantic representation of those te
 - Inherits EDTF compliance from [ixc/python-edtf](https://github.com/ixc/python-edtf).
 
 ## Usage
-After loading the library from [lib](/lib),
+
 ```pycon
 >>> from linkedtf import LEDTF
 # Initialize with a prefix of choice
@@ -22,14 +22,18 @@ After loading the library from [lib](/lib),
 # Create an RDF resource from the plain string value
 >>> s = le.uri('1987/2001')
 >>> s
-http://example.com/edtf/1987%2F2001
+rdflib.term.URIRef('http://example.com/edtf/1987%2F2001')
 # Get its description in RDF statements
->>> le.description(s)
-<http://example.com/edtf/1987%2F2001> a time:DateTimeDescription
+>>> g = le.description(s)
+>>> ttl = g.serialize(format="ttl")
+>>> ttl
+<http://example.com/edtf/1987%2F2001> a <http://www.w3.org/2006/time#DateTimeDescription> .
+# ...
 ```
 
 ## Limitations
-- _Won't do_: SPARQL query engine for EDTF data generated on-the-fly.
+- EDTF seems to lack support for calendars other than the Gregorian one.
+- _Won't do_: SPARQL query engine for EDTF data generated on-the-fly; would be nice to have but some queries could never terminate.
 
 ## Rights
 [LGPLv3](https://www.gnu.org/licenses/lgpl-3.0.en.html)
