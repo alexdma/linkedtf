@@ -13,7 +13,7 @@ This implementation allows you to generate a semantic representation of those te
 - Inherits EDTF compliance from [saw-leipzig/python-edtf](https://github.com/saw-leipzig/python-edtf)[^1].
 - Represents data according to the [PeriodO specification](https://periodo.github.io/edtf-ontology/).
 
-[^1] Fork of [ixc/python-edtf](https://github.com/ixc/python-edtf) with support for recent versions of the EDTF specification.
+[^1]: Fork of [ixc/python-edtf](https://github.com/ixc/python-edtf) with support for recent versions of the EDTF specification.
 
 ## Usage
 
