@@ -73,23 +73,14 @@ class EDTF(unittest.TestCase):
         self.assertIn(Time.Interval, ts)
         self.assertIn(EDTFO.OpenBeginningInterval, ts)
         self.assertIn(EDTFO.OpenEndInterval, ts)
-        # (a time in a) Month of a year
+        # (sometime in a) Month of a year
         ts = guess_types(parse('1970-01'))
         self.assertIn(Time.Instant, ts)
+        # (sometime in a) Decade
+        ts = guess_types(parse('197X-XX-XX'))
+        self.assertIn(EDTFO.DecadeDescription, ts)
 
-    def testRDFDecade(self):
-        e = LEDTF(EDTF._NS_EXAMPLE)
-        val = '199X-XX-XX'
-        rdf = e.description(val)
-        """
-        ex:when a time:Instant ;
-  time:inDateTime  [
-    a edtfo:DecadeDescription ;
-    time:unitType time:unitYear ;
-    edtfo:decade 201
-    ]
-  .
-        """
+
 
     def testRDF(self):
         e = LEDTF(EDTF._NS_EXAMPLE)
@@ -106,6 +97,37 @@ class EDTF(unittest.TestCase):
         for s in g.subjects(RDF.type, Time.DateTimeDescription):
             self.assertEqual(s, u)
 
+    def testRDFDecade(self):
+        e = LEDTF(EDTF._NS_EXAMPLE)
+        val = '199X-XX-XX'
+        rdf = e.description(val)
+        """
+        ex:when a time:Instant ;
+  time:inDateTime  [
+    a edtfo:DecadeDescription ;
+    time:unitType time:unitYear ;
+    edtfo:decade 201
+    ]
+  .
+        """
+
+    def testRDFFuzzy(self):
+        """
+        Can only be tested through RDF descriptions, because uncertainty and approximation are associated
+        to a statement, rather than to the temporal entity itself.
+
+        :return:
+        """
+        e = LEDTF(EDTF._NS_EXAMPLE)
+        # Uncertain (but not approximate)
+        val = '1672-01-04?'
+        rdf = e.description(val)
+        # Approximate (but not uncertain)
+        val = '1672-01-04~'
+        rdf = e.description(val)
+        # Both uncertain and approximate
+        val = '1672-01-04%'
+        rdf = e.description(val)
 
 if __name__ == '__main__':
     unittest.main()

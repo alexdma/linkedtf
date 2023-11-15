@@ -1,15 +1,16 @@
 import urllib.parse
 import re
 
-from .model import guess_types, make_decade, EDTFO, Time
+from .model import *
 from edtf2 import parse_edtf, PRECISION_DECADE
-from rdflib import Graph, RDF, URIRef , Literal
+from rdflib import Graph, RDF, URIRef, Literal
 
 
 class LEDTF(object):
     """
     Basic implementation that does not maintain a resident RDF graph, but creates them on the fly.
     """
+
     def __init__(self, namespace):
         if not namespace:
             raise ValueError('namespace must be non-empty and should respect the URL syntax.')
@@ -18,7 +19,7 @@ class LEDTF(object):
     def uri(self, edtf_val) -> URIRef:
         # Re-raise any exception for now
         parse_edtf(edtf_val)
-        return URIRef(self.namespace +  urllib.parse.quote_plus(edtf_val))
+        return URIRef(self.namespace + urllib.parse.quote_plus(edtf_val))
 
     def uri_decade(self, decade) -> URIRef:
         """
@@ -46,9 +47,15 @@ class LEDTF(object):
         g = Graph()
         g.add((s, RDF.type, Time.DateTimeDescription))
         t = guess_types(do)
-
-
-
+        for typ in t:
+            g.add((s, RDF.type, typ))
+        for method in processors(do):
+            maker = 'make_'+method
+            func = globals().get(maker)
+            if func and callable(func):
+                func(do,subject=s,graph=g)
+            else:
+                print('[WARN] Function {} not found - bad call or not implemented?'.format(maker))
         return g
 
     def _description_decade(self, decade_val: str) -> Graph:
